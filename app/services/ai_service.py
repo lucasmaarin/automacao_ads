@@ -97,6 +97,7 @@ Retorne APENAS este JSON (sem markdown):
             )
 
             result = json.loads(response.choices[0].message.content)
+            result["_model"] = settings.AI_TEXT_MODEL
             logger.info(f"Copy gerado com IA | produto={context.product_name} | modelo={settings.AI_TEXT_MODEL}")
             return result
 

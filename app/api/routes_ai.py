@@ -36,6 +36,7 @@ from app.core.meta import (
     create_ad_meta,
 )
 from app.repositories.ads_repository import AdsRepository
+from app.repositories.analytics_repository import AnalyticsRepository
 from app.models.schemas import (
     AIGenerateCopyRequest,
     AIGenerateAudienceRequest,
@@ -60,6 +61,7 @@ ads_service     = AdsService()
 ab_service      = ABTestService()
 optimizer       = OptimizerService()
 repository      = AdsRepository()
+analytics       = AnalyticsRepository()
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 _api_key_header = APIKeyHeader(name="X-API-Key", auto_error=True)
@@ -81,6 +83,7 @@ def require_api_key(api_key: str = Security(_api_key_header)) -> str:
 )
 async def generate_copy(
     payload: AIGenerateCopyRequest,
+    background_tasks: BackgroundTasks,
     _: str = Depends(require_api_key),
 ) -> APIResponse:
     """
@@ -91,6 +94,15 @@ async def generate_copy(
     """
     try:
         result = ai_service.generate_copy(payload.context)
+        background_tasks.add_task(
+            analytics.save_ai_generation,
+            automacao_id=getattr(payload, "automacao_id", "unknown"),
+            generation_type="copy",
+            context=payload.context.model_dump(),
+            output=result,
+            overrides={},
+            ai_fields=["copy"],
+        )
         return APIResponse(success=True, message="Copy gerado com sucesso.", data=result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -107,6 +119,7 @@ async def generate_copy(
 )
 async def generate_audience(
     payload: AIGenerateAudienceRequest,
+    background_tasks: BackgroundTasks,
     _: str = Depends(require_api_key),
 ) -> APIResponse:
     """
@@ -117,6 +130,15 @@ async def generate_audience(
     """
     try:
         result = ai_service.generate_audience(payload.context)
+        background_tasks.add_task(
+            analytics.save_ai_generation,
+            automacao_id=getattr(payload, "automacao_id", "unknown"),
+            generation_type="audience",
+            context=payload.context.model_dump(),
+            output=result,
+            overrides={},
+            ai_fields=["targeting"],
+        )
         return APIResponse(success=True, message="Segmentação gerada com sucesso.", data=result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -133,6 +155,7 @@ async def generate_audience(
 )
 async def generate_image(
     payload: AIGenerateImageRequest,
+    background_tasks: BackgroundTasks,
     _: str = Depends(require_api_key),
 ) -> APIResponse:
     """
@@ -143,6 +166,15 @@ async def generate_image(
     """
     try:
         result = ai_service.generate_image(payload.prompt, payload.size)
+        background_tasks.add_task(
+            analytics.save_ai_generation,
+            automacao_id=getattr(payload, "automacao_id", "unknown"),
+            generation_type="image",
+            context={"prompt": payload.prompt, "size": payload.size},
+            output=result,
+            overrides={},
+            ai_fields=["image"],
+        )
         return APIResponse(success=True, message="Imagem gerada com sucesso.", data=result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -255,6 +287,42 @@ async def create_full_ad_with_ai(
             "ai_generated_fields": ad_content.get("ai_generated_fields", []),
         })
 
+        # --- 6. Salvar analytics (overrides + contexto completo) ---
+        overrides_recorded = {}
+        if payload.custom_copy:
+            overrides_recorded["copy"] = payload.custom_copy
+        if payload.custom_targeting:
+            overrides_recorded["targeting"] = payload.custom_targeting
+        if payload.custom_image_url:
+            overrides_recorded["image_url"] = payload.custom_image_url
+        if payload.custom_campaign_name:
+            overrides_recorded["campaign_name"] = payload.custom_campaign_name
+
+        ai_history_id = analytics.save_ai_generation(
+            automacao_id=payload.automacao_id,
+            generation_type="full_ad",
+            context=payload.context.model_dump(),
+            output={
+                "copy": copy,
+                "targeting": targeting,
+                "image": image,
+                "audience_info": ad_content.get("audience_info"),
+            },
+            overrides=overrides_recorded,
+            ai_fields=ad_content.get("ai_generated_fields", []),
+            ad_id=ad["id"],
+            campaign_id=campaign["id"],
+        )
+
+        # Snapshot inicial de métricas (zerado — será enriquecido depois)
+        analytics.save_metrics_snapshot(
+            automacao_id=payload.automacao_id,
+            campaign_id=campaign["id"],
+            metrics={"impressions": 0, "clicks": 0, "spend": 0},
+            ad_id=ad["id"],
+            adset_id=adset["id"],
+        )
+
         result = {
             "ai_generated": {
                 "copy":              copy,
@@ -269,6 +337,10 @@ async def create_full_ad_with_ai(
                 "adset_id":    adset["id"],
                 "ad_id":       ad["id"],
                 "status":      payload.campaign_status.value,
+            },
+            "analytics": {
+                "ai_history_id": ai_history_id,
+                "note": "Use POST /analytics/ai-feedback/{ai_history_id} para vincular métricas reais a esta geração.",
             },
         }
 
@@ -383,6 +455,7 @@ async def get_ab_test(
 )
 async def evaluate_ab_test(
     test_id: str,
+    background_tasks: BackgroundTasks,
     auto_apply: bool = Query(None, description="Se True, pausa perdedores automaticamente"),
     _: str = Depends(require_api_key),
 ) -> APIResponse:
@@ -392,10 +465,34 @@ async def evaluate_ab_test(
     """
     try:
         result = ab_service.evaluate_ab_test(test_id, auto_apply=auto_apply)
-        winner = result.get("winner", {}).get("name", "—")
+        winner = result.get("winner", {})
+
+        # Salva resultado no analytics para aprender qual abordagem ganha
+        if winner:
+            variants = result.get("variants", [])
+            best = winner.get("metrics", {})
+            second = next(
+                (v.get("metrics", {}) for v in variants if v.get("name") != winner.get("name")),
+                {}
+            )
+            metric = result.get("metric_used", "ctr")
+            best_val = best.get(metric, 0) or 0
+            second_val = second.get(metric, 0) or 0
+            delta = round((best_val - second_val) / second_val * 100, 1) if second_val else None
+
+            background_tasks.add_task(
+                analytics.save_ab_result,
+                test_id=test_id,
+                automacao_id=result.get("automacao_id", "unknown"),
+                winner=winner,
+                variants=variants,
+                metric_used=metric,
+                delta_pct=delta,
+            )
+
         return APIResponse(
             success=True,
-            message=f"Avaliação concluída. Vencedor: {winner}",
+            message=f"Avaliação concluída. Vencedor: {winner.get('name', '—')}",
             data=result,
         )
     except ValueError as exc:
@@ -413,6 +510,7 @@ async def evaluate_ab_test(
 )
 async def optimize_campaign(
     payload: OptimizeRequest,
+    background_tasks: BackgroundTasks,
     use_ai: bool = Query(True, description="Se True, adiciona análise contextual do GPT-4"),
     _: str = Depends(require_api_key),
 ) -> APIResponse:
@@ -424,6 +522,25 @@ async def optimize_campaign(
     """
     try:
         result = optimizer.optimize(payload, use_ai_analysis=use_ai)
+
+        # Salva cada regra ativada no analytics
+        for rule_result in result.get("rules_evaluated", []):
+            if rule_result.get("triggered"):
+                background_tasks.add_task(
+                    analytics.save_optimizer_action,
+                    automacao_id=payload.automacao_id,
+                    campaign_id=payload.campaign_id,
+                    rule={
+                        "metric":    rule_result["metric"],
+                        "condition": rule_result["condition"],
+                        "threshold": rule_result["threshold"],
+                        "action":    rule_result["action"],
+                    },
+                    action_taken=rule_result["action"],
+                    metric_value=rule_result["actual_value"],
+                    dry_run=payload.dry_run,
+                )
+
         return APIResponse(
             success=True,
             message=result.get("summary", "Otimização concluída."),

@@ -199,6 +199,7 @@ const ROUTES = {
   'novo-adset':     { title: 'Novo Ad Set',     fn: renderNovoAdSet },
   'novo-ad':        { title: 'Novo Anúncio',    fn: renderNovoAd },
   'configuracoes':  { title: 'Configurações',   fn: renderConfiguracoes },
+  'guia':           { title: '📖 Guia de Uso',  fn: renderGuia },
 };
 
 function navigate(route) {
@@ -1999,6 +2000,306 @@ async function runOptimization() {
       <div class="alert alert-danger">${err.message}</div>`;
     toast(err.message, 'error');
   }
+}
+
+// ================================================================
+// PAGE: GUIA DE USO
+// ================================================================
+
+function renderGuia() {
+  const content = document.getElementById('content');
+
+  const steps = [
+    {
+      num: 1,
+      icon: '⚙',
+      title: 'Configure a API Key',
+      tag: 'Primeiro passo obrigatório',
+      tagColor: 'badge-active',
+      route: 'configuracoes',
+      routeLabel: 'Ir para Configurações',
+      desc: 'Antes de qualquer coisa, informe a chave de autenticação da API. Ela está definida no <code>.env</code> do servidor como <code>API_SECRET_KEY</code>.',
+      steps: [
+        'Clique em <strong>⚙ Configurações</strong> no menu lateral.',
+        'Cole o valor de <code>API_SECRET_KEY</code> do seu <code>.env</code> no campo <em>X-API-Key</em>.',
+        'Clique em <strong>💾 Salvar</strong>.',
+        'Clique em <strong>🔌 Testar Conexão</strong> — deve aparecer "API respondendo normalmente".',
+      ],
+      tip: 'A chave é salva apenas no seu navegador (localStorage). Você precisará refazer isso se limpar os dados do navegador.',
+      code: null,
+    },
+    {
+      num: 2,
+      icon: '🔑',
+      title: 'Registre suas credenciais Meta',
+      tag: 'Multi-conta',
+      tagColor: 'badge-blue',
+      route: 'automacoes',
+      routeLabel: 'Ir para Automações',
+      desc: 'Cada "automação" representa uma conta de anúncios Meta. Você pode ter quantas quiser — uma por cliente, por exemplo.',
+      steps: [
+        'Vá em <strong>🔑 Automações</strong> no menu.',
+        'Defina um <strong>automacao_id</strong> — é um nome interno seu (ex: <code>cliente_joao</code>).',
+        'Preencha <strong>App ID</strong> e <strong>App Secret</strong> do seu app em <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a>.',
+        'Cole o <strong>Access Token</strong> gerado no <a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a> com permissão <code>ads_management</code>.',
+        'Informe o <strong>Ad Account ID</strong> no formato <code>act_XXXXXXXXX</code> (veja em Gerenciador de Anúncios).',
+        'Clique em <strong>💾 Salvar Automação</strong>.',
+      ],
+      tip: 'O Access Token expira. Quando isso acontecer, basta registrar novamente a automação com o novo token — o sistema atualiza no Firestore.',
+      code: null,
+    },
+    {
+      num: 3,
+      icon: '🤖',
+      title: 'Crie um anúncio completo com IA',
+      tag: 'Caminho recomendado',
+      tagColor: 'badge-active',
+      route: 'ai-creator',
+      routeLabel: 'Ir para Criar com IA',
+      desc: 'O fluxo mais poderoso. A IA gera o copy, define o público e cria a imagem automaticamente. Você pode sobrescrever qualquer campo.',
+      steps: [
+        'Vá em <strong>🤖 Criar com IA</strong>.',
+        'Selecione a automação (conta Meta) desejada.',
+        'Preencha o <strong>contexto do produto</strong>: nome, descrição, público-alvo, objetivo e tom de voz.',
+        'Clique em <strong>✨ Pré-visualizar IA</strong> para ver o que será gerado <em>antes</em> de criar.',
+        'Se quiser usar seu próprio copy ou imagem, expanda a seção <em>Overrides Manuais</em> e preencha os campos.',
+        'Informe <strong>Page ID</strong> (ID da sua página no Facebook), <strong>link de destino</strong> e orçamento diário.',
+        'Clique em <strong>🚀 Criar com IA</strong>.',
+      ],
+      tip: 'A campanha e o anúncio são criados com status PAUSED — ative manualmente no Meta Ads Manager quando estiver pronto para veicular.',
+      code: `// Exemplo de contexto ideal para a IA:
+Produto: Curso Online de Tráfego Pago
+Descrição: Aprenda a criar campanhas lucrativas do zero
+Público: Empreendedores e freelancers 25-45 anos
+Objetivo: Captar leads qualificados
+Tom: Profissional com urgência`,
+    },
+    {
+      num: 4,
+      icon: '📢',
+      title: 'Ou crie manualmente (controle total)',
+      tag: 'Criação manual',
+      tagColor: 'badge-gray',
+      route: 'nova-campanha',
+      routeLabel: 'Criar Campanha',
+      desc: 'Prefere controle total? Crie campanha, ad set e anúncio em etapas separadas. Siga exatamente esta ordem.',
+      steps: [
+        '<strong>Passo 1 —</strong> Vá em <strong>＋ Nova Campanha</strong> e preencha nome, objetivo (ex: OUTCOME_SALES) e orçamento. Anote o <em>Campaign ID</em> retornado.',
+        '<strong>Passo 2 —</strong> Vá em <strong>＋ Novo Ad Set</strong>. Use o Campaign ID do passo anterior. Configure público, orçamento e período.',
+        '<strong>Passo 3 —</strong> Vá em <strong>＋ Novo Anúncio</strong>. Use o Ad Set ID do passo anterior. Cole a copy e a URL da imagem.',
+      ],
+      tip: 'Os IDs de campanha, ad set e anúncio aparecem no resultado de cada criação. Copie e salve antes de avançar para o próximo passo.',
+      code: `// Objetivos disponíveis:
+OUTCOME_AWARENESS    → Alcance e brand awareness
+OUTCOME_TRAFFIC      → Tráfego para site/landing page
+OUTCOME_ENGAGEMENT   → Curtidas, comentários, shares
+OUTCOME_LEADS        → Formulário de lead
+OUTCOME_APP_PROMOTION → Instalações de app
+OUTCOME_SALES        → Conversões e vendas`,
+    },
+    {
+      num: 5,
+      icon: '⚗',
+      title: 'Rode Testes A/B para descobrir o melhor copy',
+      tag: 'IA opcional',
+      tagColor: 'badge-blue',
+      route: 'ab-test',
+      routeLabel: 'Ir para Teste A/B',
+      desc: 'Crie múltiplas variantes de copy no mesmo Ad Set e deixe a Meta distribuir. Depois avalie qual venceu.',
+      steps: [
+        'Vá em <strong>⚗ Teste A/B</strong>.',
+        'Selecione a automação, informe o <strong>Ad Set ID</strong> (já deve existir) e o <strong>Page ID</strong>.',
+        'Preencha o contexto do produto.',
+        'Escolha o número de variantes (2 a 4) — a IA cria cada uma com uma abordagem diferente: <em>benefício, urgência, prova social, curiosidade</em>.',
+        'Clique em <strong>Criar Teste A/B com IA</strong>.',
+        'Após alguns dias rodando, clique em <strong>Avaliar</strong> no teste. O sistema compara as métricas e declara o vencedor.',
+        'Ative <em>Pausar Perdedores</em> para parar automaticamente as variantes ruins.',
+      ],
+      tip: 'O resultado de cada teste A/B é salvo em Analytics → Resultados A/B. Com o tempo você descobre qual tipo de abordagem funciona melhor para cada nicho.',
+      code: null,
+    },
+    {
+      num: 6,
+      icon: '⚡',
+      title: 'Ative o Otimizador automático',
+      tag: 'Automação real',
+      tagColor: 'badge-active',
+      route: 'optimizer',
+      routeLabel: 'Ir para Otimizador',
+      desc: 'Defina regras que executam ações automáticas: pausar campanhas ruins, aumentar ou reduzir orçamento conforme performance.',
+      steps: [
+        'Vá em <strong>⚡ Otimizador</strong>.',
+        'Selecione a automação e informe o <strong>Campaign ID</strong>.',
+        'Clique em <strong>Carregar Preset</strong> para usar regras prontas: <em>conservador, balanceado ou agressivo</em>.',
+        'Ou adicione regras manualmente: escolha a métrica (CPC, CTR, CPM...), a condição e a ação (pausar, +10% budget, etc.).',
+        '<strong>Marque "Modo Simulação"</strong> na primeira vez — o sistema mostra o que faria sem executar nada.',
+        'Quando satisfeito, desmarque a simulação e clique em <strong>Executar Otimização</strong>.',
+      ],
+      tip: 'Para otimização contínua, chame o endpoint <code>POST /api/v1/optimize</code> via cron job (GitHub Actions, Cloud Scheduler, etc.) uma vez por dia.',
+      code: `// Regras sugeridas para começar (preset balanceado):
+CPC > 3.00    → Reduzir orçamento 10%
+CTR < 1.0%    → Notificar (verificar copy)
+CPM > 50.00   → Pausar campanha
+CTR > 3.0%    → Aumentar orçamento 10%`,
+    },
+    {
+      num: 7,
+      icon: '📊',
+      title: 'Acompanhe métricas e Analytics',
+      tag: 'Melhoria contínua',
+      tagColor: 'badge-blue',
+      route: 'campanhas',
+      routeLabel: 'Ver Campanhas',
+      desc: 'Consulte insights em tempo real e analise os dados coletados pelo sistema para melhorar a automação ao longo do tempo.',
+      steps: [
+        'Vá em <strong>📢 Campanhas</strong> → selecione uma automação → clique em <strong>📊 Insights</strong> em qualquer campanha.',
+        'Escolha o período (hoje, ontem, últimos 7 dias, 30 dias) e veja CTR, CPC, CPM, gasto e impressões.',
+        'Para a série histórica, use o endpoint <code>GET /api/v1/analytics/metrics-history?campaign_id=XXX</code> ou salve snapshots via <code>POST /api/v1/analytics/metrics-snapshot</code>.',
+        'Veja os dados coletados de IA em <code>GET /api/v1/analytics/ai-history</code> — inclui o que a IA gerou e o que você sobrescreveu.',
+        'Após um anúncio rodar, vincule as métricas reais à geração de IA usando <code>POST /api/v1/analytics/ai-feedback/{ai_history_id}</code>.',
+      ],
+      tip: 'O <code>ai_history_id</code> é retornado no response de <em>Criar com IA</em>. Guarde-o para depois vincular as métricas reais e construir um histórico de performance.',
+      code: null,
+    },
+  ];
+
+  const stepsHtml = steps.map(s => `
+    <div class="guia-step" id="guia-step-${s.num}">
+      <div class="guia-step-header" onclick="toggleGuiaStep(${s.num})">
+        <div class="guia-step-num">${s.num}</div>
+        <div class="guia-step-info">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:18px">${s.icon}</span>
+            <strong style="font-size:15px">${s.title}</strong>
+            <span class="badge ${s.tagColor}" style="font-size:11px">${s.tag}</span>
+          </div>
+          <p style="color:var(--text-2);font-size:12px;margin:2px 0 0">${s.desc}</p>
+        </div>
+        <span class="guia-chevron" id="guia-chev-${s.num}">›</span>
+      </div>
+      <div class="guia-step-body" id="guia-body-${s.num}" style="display:none">
+        <ol class="guia-list">
+          ${s.steps.map(st => `<li>${st}</li>`).join('')}
+        </ol>
+        ${s.tip ? `
+          <div class="alert alert-info" style="margin-top:12px;font-size:13px">
+            💡 <strong>Dica:</strong> ${s.tip}
+          </div>` : ''}
+        ${s.code ? `
+          <div class="code-block" style="margin-top:12px;font-size:12px;white-space:pre">${s.code}</div>` : ''}
+        <div style="margin-top:16px">
+          <button class="btn btn-primary btn-sm" onclick="navigate('${s.route}')">
+            ${s.icon} ${s.routeLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h2>📖 Guia de Uso</h2>
+        <p>Aprenda a usar cada funcionalidade da automação, passo a passo.</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="expandAllGuia()">Expandir tudo</button>
+    </div>
+
+    <div class="alert alert-info" style="margin-bottom:20px">
+      ⚡ <strong>Fluxo recomendado:</strong>
+      Configurações → Registrar Automação → Criar com IA → Teste A/B → Otimizador → Acompanhar Métricas
+    </div>
+
+    <div class="guia-progress">
+      ${steps.map(s => `
+        <div class="guia-progress-step" title="Passo ${s.num}: ${s.title}" onclick="scrollToGuiaStep(${s.num})">
+          <div class="guia-progress-dot">${s.num}</div>
+          <span class="guia-progress-label">${s.icon}</span>
+        </div>
+      `).join('<div class="guia-progress-line"></div>')}
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      ${stepsHtml}
+    </div>
+
+    <div class="card" style="margin-top:20px;border-left:4px solid var(--blue)">
+      <div class="card-header"><span class="card-title">Referência rápida de endpoints</span></div>
+      <div class="code-block" style="font-size:12px">${[
+        '── Automações ──────────────────────────────────',
+        'POST   /api/v1/automacao              Registrar credenciais Meta',
+        'GET    /api/v1/automacoes             Listar automações',
+        '',
+        '── Campanhas ───────────────────────────────────',
+        'POST   /api/v1/campaign              Criar campanha',
+        'GET    /api/v1/campaigns             Listar campanhas de uma automação',
+        'PATCH  /api/v1/campaign/{id}/pause   Pausar campanha',
+        'PATCH  /api/v1/campaign/{id}/activate Ativar campanha',
+        'PATCH  /api/v1/campaign/{id}/budget  Atualizar orçamento',
+        'GET    /api/v1/campaign/{id}/insights Métricas (insights)',
+        '',
+        '── Ad Set & Anúncio ────────────────────────────',
+        'POST   /api/v1/adset                 Criar Ad Set',
+        'POST   /api/v1/ad                    Criar Anúncio',
+        '',
+        '── IA ──────────────────────────────────────────',
+        'POST   /api/v1/ai/generate-copy      Gerar copy com GPT-4o',
+        'POST   /api/v1/ai/generate-audience  Gerar segmentação com GPT-4o',
+        'POST   /api/v1/ai/generate-image     Gerar imagem com DALL-E 3',
+        'POST   /api/v1/ai/create-full-ad     Criar anúncio completo com IA',
+        '',
+        '── Teste A/B ───────────────────────────────────',
+        'POST   /api/v1/ab-test/create        Criar teste (variantes manuais)',
+        'POST   /api/v1/ab-test/create-with-ai Criar teste com IA',
+        'GET    /api/v1/ab-tests              Listar testes',
+        'POST   /api/v1/ab-test/{id}/evaluate Avaliar vencedor',
+        '',
+        '── Otimizador ──────────────────────────────────',
+        'POST   /api/v1/optimize              Executar otimização',
+        'GET    /api/v1/optimize/presets      Presets de regras',
+        '',
+        '── Analytics ───────────────────────────────────',
+        'GET    /api/v1/analytics/summary          Resumo geral',
+        'GET    /api/v1/analytics/ai-history       Histórico de gerações IA',
+        'POST   /api/v1/analytics/ai-feedback/{id} Vincular métricas reais à IA',
+        'GET    /api/v1/analytics/ab-results       Resultados de testes A/B',
+        'GET    /api/v1/analytics/optimizer-actions Ações do otimizador',
+        'GET    /api/v1/analytics/metrics-history  Série histórica de métricas',
+        'POST   /api/v1/analytics/metrics-snapshot Salvar snapshot de métricas',
+      ].join('\n')}</div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="/docs" target="_blank" class="btn btn-ghost btn-sm">📖 Swagger UI (interativo)</a>
+        <a href="/redoc" target="_blank" class="btn btn-ghost btn-sm">📄 ReDoc</a>
+      </div>
+    </div>
+  `;
+}
+
+function toggleGuiaStep(num) {
+  const body = document.getElementById(`guia-body-${num}`);
+  const chev = document.getElementById(`guia-chev-${num}`);
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  chev.style.transform = open ? 'rotate(90deg)' : 'none';
+  chev.style.transition = 'transform 0.2s';
+}
+
+function expandAllGuia() {
+  document.querySelectorAll('[id^="guia-body-"]').forEach(el => {
+    el.style.display = 'block';
+  });
+  document.querySelectorAll('[id^="guia-chev-"]').forEach(el => {
+    el.style.transform = 'rotate(90deg)';
+  });
+}
+
+function scrollToGuiaStep(num) {
+  const el = document.getElementById(`guia-step-${num}`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Abre o passo se estiver fechado
+  const body = document.getElementById(`guia-body-${num}`);
+  if (body && body.style.display === 'none') toggleGuiaStep(num);
 }
 
 // ================================================================

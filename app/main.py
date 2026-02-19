@@ -26,6 +26,7 @@ from app.core.config import get_settings
 from app.core.firebase import init_firebase
 from app.api.routes_ads import router as ads_router
 from app.api.routes_ai import router as ai_router
+from app.api.routes_analytics import router as analytics_router
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -140,8 +141,9 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 # ROTAS
 # =============================================================================
 
-app.include_router(ads_router, prefix="/api/v1")
-app.include_router(ai_router,  prefix="/api/v1")
+app.include_router(ads_router,       prefix="/api/v1")
+app.include_router(ai_router,        prefix="/api/v1")
+app.include_router(analytics_router, prefix="/api/v1")
 
 # =============================================================================
 # FRONTEND ESTÁTICO
