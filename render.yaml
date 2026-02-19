@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: automacao-ads
+    runtime: python
+    region: oregon          # ou frankfurt se quiser mais próximo do Brasil
+    plan: free              # troque para "starter" em produção
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: AutomacaoAds
+      - key: APP_VERSION
+        value: 1.0.0
+      - key: META_API_VERSION
+        value: v20.0
+      - key: FIREBASE_PROJECT_ID
+        value: automacoes-royal-x
+
+      # ⚠ Estas devem ser preenchidas no dashboard do Render (não aqui):
+      - key: API_SECRET_KEY
+        sync: false          # Render pede o valor manualmente no deploy
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FIREBASE_CREDENTIALS_JSON
+        sync: false          # Cole aqui o conteúdo inteiro do automacoes-royal-x.json

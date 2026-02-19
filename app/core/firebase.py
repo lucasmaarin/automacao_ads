@@ -14,6 +14,7 @@ Decisão técnica: usar Service Account JSON (automacoes-royal-x.json)
 em vez de GOOGLE_APPLICATION_CREDENTIALS para maior controle e portabilidade.
 """
 
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore import Client, CollectionReference
@@ -27,6 +28,28 @@ settings = get_settings()
 _db: Client | None = None
 
 
+def _build_credentials() -> credentials.Certificate:
+    """
+    Constrói as credenciais do Firebase.
+
+    Prioridade:
+    1. FIREBASE_CREDENTIALS_JSON (variável de ambiente com o conteúdo do JSON)
+       → Usado em produção (Render, Railway, etc.) onde não há arquivo em disco.
+    2. FIREBASE_CREDENTIALS_PATH (caminho para o arquivo .json)
+       → Usado localmente com o arquivo automacoes-royal-x.json.
+    """
+    if settings.FIREBASE_CREDENTIALS_JSON:
+        try:
+            cred_dict = json.loads(settings.FIREBASE_CREDENTIALS_JSON)
+            logger.info("Firebase: credenciais carregadas da variavel de ambiente FIREBASE_CREDENTIALS_JSON.")
+            return credentials.Certificate(cred_dict)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"FIREBASE_CREDENTIALS_JSON invalido (JSON malformado): {exc}")
+
+    logger.info(f"Firebase: usando arquivo de credenciais -> {settings.FIREBASE_CREDENTIALS_PATH}")
+    return credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
+
+
 def init_firebase() -> None:
     """
     Inicializa o Firebase Admin SDK com a service account.
@@ -34,18 +57,18 @@ def init_firebase() -> None:
     Seguro para chamar múltiplas vezes — verifica se já foi inicializado.
     """
     if firebase_admin._apps:
-        logger.info("Firebase já inicializado — ignorando reinicialização.")
+        logger.info("Firebase ja inicializado — ignorando reinicializacao.")
         return
 
     try:
-        cred = credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
+        cred = _build_credentials()
         firebase_admin.initialize_app(cred, {"projectId": settings.FIREBASE_PROJECT_ID})
         logger.info(
             f"Firebase Admin SDK inicializado | projeto={settings.FIREBASE_PROJECT_ID}"
         )
     except FileNotFoundError:
         logger.error(
-            f"Arquivo de credenciais não encontrado: {settings.FIREBASE_CREDENTIALS_PATH}"
+            f"Arquivo de credenciais nao encontrado: {settings.FIREBASE_CREDENTIALS_PATH}"
         )
         raise
     except Exception as e:

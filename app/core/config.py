@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     # === Firebase ===
     FIREBASE_CREDENTIALS_PATH: str = "automacoes-royal-x.json"
     FIREBASE_PROJECT_ID: str = "automacoes-royal-x"
+    # Em produção (Render, Railway, etc.), cole aqui o conteúdo do JSON inteiro
+    FIREBASE_CREDENTIALS_JSON: str = ""  # conteúdo do .json como string
 
     # === Meta API ===
     # Versão da Graph API — manter sempre atualizado
