@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exclusão de Dados — AutomacaoAds</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F2F5; color: #1C1E21; line-height: 1.7; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { text-align: center; margin-bottom: 40px; padding-bottom: 32px; border-bottom: 2px solid #DADDE1; }
+    header h1 { font-size: 28px; color: #1877F2; margin-bottom: 8px; }
+    header p { color: #65676B; font-size: 14px; }
+    .card { background: #fff; border-radius: 10px; border: 1px solid #DADDE1; padding: 32px; margin-bottom: 20px; }
+    h2 { font-size: 18px; color: #1877F2; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #E7F0FD; }
+    p { margin-bottom: 12px; font-size: 15px; color: #1C1E21; }
+    ul { padding-left: 20px; margin-bottom: 12px; }
+    li { margin-bottom: 6px; font-size: 15px; }
+    .highlight { background: #E7F0FD; border-left: 4px solid #1877F2; padding: 14px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
+    .warning { background: #FFF3CD; border-left: 4px solid #FFC107; padding: 14px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
+    footer { text-align: center; margin-top: 40px; color: #65676B; font-size: 13px; }
+    a { color: #1877F2; }
+    nav { text-align: center; margin-bottom: 32px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    nav a { color: #1877F2; text-decoration: none; font-size: 14px; padding: 6px 14px; border: 1px solid #1877F2; border-radius: 20px; }
+    nav a:hover { background: #E7F0FD; }
+
+    /* Formulário de solicitação */
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #1C1E21; }
+    input, textarea, select {
+      width: 100%; padding: 10px 14px; border: 1px solid #DADDE1;
+      border-radius: 8px; font-size: 15px; font-family: inherit;
+      background: #F0F2F5; color: #1C1E21; transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: #1877F2; background: #fff;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .btn-submit {
+      width: 100%; padding: 12px; background: #1877F2; color: #fff;
+      border: none; border-radius: 8px; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-top: 8px; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #1558B0; }
+    .success-msg {
+      display: none; background: #E6F4EA; border: 1px solid #34A853;
+      border-radius: 8px; padding: 16px; text-align: center; color: #1E6B3A; font-weight: 600;
+    }
+
+    /* Steps */
+    .steps { counter-reset: step; }
+    .step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+    .step-num {
+      counter-increment: step; min-width: 32px; height: 32px;
+      background: #1877F2; color: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; flex-shrink: 0;
+    }
+    .step-num::before { content: counter(step); }
+    .step-text { padding-top: 4px; }
+    .step-text strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Exclusao de Dados</h1>
+    <p>Solicite a remocao dos seus dados pessoais do AutomacaoAds</p>
+    <p style="margin-top:4px;">Ultima atualizacao: Fevereiro de 2026</p>
+  </header>
+
+  <nav>
+    <a href="/privacidade">Politica de Privacidade</a>
+    <a href="/termos">Termos de Servico</a>
+    <a href="/exclusao-de-dados">Exclusao de Dados</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+
+  <!-- O que coletamos -->
+  <div class="card">
+    <h2>Quais Dados Podemos Ter Sobre Voce</h2>
+    <p>O AutomacaoAds e um app de uso pessoal integrado a plataforma Meta (Facebook/Instagram). Os dados que podemos armazenar incluem:</p>
+    <ul>
+      <li><strong>Dados da conta Meta:</strong> ID de usuario, nome, e-mail, token de acesso (access token)</li>
+      <li><strong>Dados de campanhas:</strong> IDs de campanhas, conjuntos de anuncios e anuncios criados via API</li>
+      <li><strong>Metricas de desempenho:</strong> impressoes, cliques, custo por resultado</li>
+      <li><strong>Historico de IA:</strong> textos de copias gerados, publicos-alvo sugeridos e imagens criadas</li>
+      <li><strong>Resultados de testes A/B:</strong> variantes testadas e vencedoras</li>
+      <li><strong>Logs de otimizacao:</strong> regras aplicadas e acoes do otimizador automatico</li>
+    </ul>
+    <div class="highlight">
+      Todos esses dados sao armazenados no Firebase Firestore sob controle do proprietario do app (Royal).
+      Nao compartilhamos dados com terceiros alem da propria Meta.
+    </div>
+  </div>
+
+  <!-- Como solicitar exclusao -->
+  <div class="card">
+    <h2>Como Solicitar a Exclusao</h2>
+    <p>Voce tem duas opcoes para solicitar a exclusao dos seus dados:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-text">
+          <strong>Preencha o formulario abaixo</strong>
+          Envie uma solicitacao com seu nome, e-mail e o tipo de dado que deseja remover.
+          Responderemos em ate <strong>30 dias</strong>.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-text">
+          <strong>Entre em contato diretamente</strong>
+          Envie um e-mail para <a href="mailto:royalx481@gmail.com">royalx481@gmail.com</a>
+          ou ligue/WhatsApp: <a href="https://wa.me/5511915172179">+55 11 91517-2179</a> com o assunto
+          "Exclusao de Dados".
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-text">
+          <strong>Revogue o acesso via Meta</strong>
+          Acesse <a href="https://www.facebook.com/settings?tab=applications" target="_blank" rel="noopener">
+          Configuracoes da conta Meta > Aplicativos e sites</a>, encontre o AutomacaoAds e clique em
+          <em>"Remover"</em>. Isso revoga os tokens de acesso imediatamente.
+        </div>
+      </div>
+    </div>
+
+    <div class="warning">
+      <strong>Atencao:</strong> Ao remover o acesso via Meta, as campanhas e anuncios ja criados em sua
+      conta permanecem no Meta Ads — apenas os dados armazenados em nosso sistema serao excluidos.
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="card">
+    <h2>Formulario de Solicitacao de Exclusao</h2>
+
+    <form id="deleteForm" onsubmit="submitForm(event)">
+      <div class="form-group">
+        <label for="nome">Nome completo *</label>
+        <input type="text" id="nome" placeholder="Seu nome" required />
+      </div>
+      <div class="form-group">
+        <label for="email">E-mail *</label>
+        <input type="email" id="email" placeholder="seu@email.com" required />
+      </div>
+      <div class="form-group">
+        <label for="uid">ID de usuario Meta ou Facebook (opcional)</label>
+        <input type="text" id="uid" placeholder="Ex: 1234567890" />
+      </div>
+      <div class="form-group">
+        <label for="tipo">O que deseja excluir? *</label>
+        <select id="tipo" required>
+          <option value="">Selecione...</option>
+          <option value="tudo">Todos os meus dados</option>
+          <option value="campanhas">Historico de campanhas e anuncios</option>
+          <option value="ia">Historico de geracoes de IA</option>
+          <option value="metricas">Metricas e snapshots</option>
+          <option value="token">Token de acesso / credenciais</option>
+          <option value="outro">Outro (descrever abaixo)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="obs">Observacoes adicionais</label>
+        <textarea id="obs" placeholder="Descreva o que deseja remover ou qualquer informacao adicional..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Enviar Solicitacao</button>
+    </form>
+
+    <div class="success-msg" id="successMsg">
+      Solicitacao recebida! Entraremos em contato em ate 30 dias para confirmar a exclusao dos seus dados.
+    </div>
+  </div>
+
+  <!-- Prazo e confirmacao -->
+  <div class="card">
+    <h2>Prazo e Confirmacao</h2>
+    <ul>
+      <li>Resposta inicial: ate <strong>5 dias uteis</strong></li>
+      <li>Exclusao completa dos dados: ate <strong>30 dias</strong> apos confirmacao</li>
+      <li>Voce recebera um e-mail de confirmacao quando os dados forem removidos</li>
+      <li>Dados anonimizados ou agregados (sem identificacao pessoal) podem ser mantidos para fins estatisticos</li>
+      <li>Dados exigidos por lei ou para cumprimento de obrigacoes legais serao retidos pelo prazo legal</li>
+    </ul>
+  </div>
+
+  <!-- Contato -->
+  <div class="card">
+    <h2>Contato do Responsavel</h2>
+    <p><strong>Royal</strong></p>
+    <p>E-mail: <a href="mailto:royalx481@gmail.com">royalx481@gmail.com</a></p>
+    <p>WhatsApp / Telefone: <a href="https://wa.me/5511915172179">+55 11 91517-2179</a></p>
+    <p>Para duvidas sobre seus direitos de privacidade, consulte tambem a nossa
+      <a href="/privacidade">Politica de Privacidade</a> e os
+      <a href="/termos">Termos de Servico</a>.
+    </p>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Royal — AutomacaoAds. Todos os direitos reservados.</p>
+    <p style="margin-top:6px;">
+      <a href="/privacidade">Privacidade</a> &nbsp;|&nbsp;
+      <a href="/termos">Termos</a> &nbsp;|&nbsp;
+      <a href="/exclusao-de-dados">Exclusao de Dados</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  function submitForm(e) {
+    e.preventDefault();
+    // Em producao, aqui voce pode enviar os dados para uma API ou servico de e-mail.
+    // Por ora, apenas exibe a mensagem de sucesso e limpa o formulario.
+    document.getElementById('deleteForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+  }
+</script>
+</body>
+</html>

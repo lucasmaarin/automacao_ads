@@ -163,6 +163,18 @@ if os.path.isdir(FRONTEND_DIR):
         """Serve o dashboard frontend (SPA)."""
         return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
+    @app.get("/privacidade", include_in_schema=False)
+    async def serve_privacidade():
+        return FileResponse(os.path.join(FRONTEND_DIR, "privacidade.html"))
+
+    @app.get("/termos", include_in_schema=False)
+    async def serve_termos():
+        return FileResponse(os.path.join(FRONTEND_DIR, "termos.html"))
+
+    @app.get("/exclusao-de-dados", include_in_schema=False)
+    async def serve_exclusao():
+        return FileResponse(os.path.join(FRONTEND_DIR, "exclusao-de-dados.html"))
+
 
 # =============================================================================
 # ENDPOINTS DE SISTEMA
