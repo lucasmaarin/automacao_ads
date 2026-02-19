@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidade — AutomacaoAds</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F2F5; color: #1C1E21; line-height: 1.7; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { text-align: center; margin-bottom: 40px; padding-bottom: 32px; border-bottom: 2px solid #DADDE1; }
+    header h1 { font-size: 28px; color: #1877F2; margin-bottom: 8px; }
+    header p { color: #65676B; font-size: 14px; }
+    .card { background: #fff; border-radius: 10px; border: 1px solid #DADDE1; padding: 32px; margin-bottom: 20px; }
+    h2 { font-size: 18px; color: #1877F2; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #E7F0FD; }
+    p { margin-bottom: 12px; font-size: 15px; color: #1C1E21; }
+    ul { padding-left: 20px; margin-bottom: 12px; }
+    li { margin-bottom: 6px; font-size: 15px; }
+    .highlight { background: #E7F0FD; border-left: 4px solid #1877F2; padding: 14px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
+    footer { text-align: center; margin-top: 40px; color: #65676B; font-size: 13px; }
+    a { color: #1877F2; }
+    nav { text-align: center; margin-bottom: 32px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    nav a { color: #1877F2; text-decoration: none; font-size: 14px; padding: 6px 14px; border: 1px solid #1877F2; border-radius: 20px; }
+    nav a:hover { background: #E7F0FD; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>AutomacaoAds</h1>
+    <p>Política de Privacidade — Última atualização: fevereiro de 2026</p>
+  </header>
+
+  <nav>
+    <a href="/privacidade">Política de Privacidade</a>
+    <a href="/termos">Termos de Serviço</a>
+    <a href="/exclusao-de-dados">Exclusão de Dados</a>
+  </nav>
+
+  <div class="card">
+    <h2>1. Quem somos</h2>
+    <p>O <strong>AutomacaoAds</strong> é uma plataforma de automação de anúncios para o Meta Ads (Facebook e Instagram). Esta política descreve como coletamos, usamos e protegemos suas informações ao utilizar nosso sistema.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Dados que coletamos</h2>
+    <p>Para o funcionamento da plataforma, coletamos e armazenamos:</p>
+    <ul>
+      <li><strong>Credenciais da Meta API:</strong> App ID, App Secret e Access Token, necessários para criar e gerenciar anúncios em seu nome.</li>
+      <li><strong>Ad Account ID:</strong> Identificador da sua conta de anúncios no Meta.</li>
+      <li><strong>Dados de campanhas:</strong> Nomes, objetivos, orçamentos, métricas de performance (impressões, cliques, CTR, CPC).</li>
+      <li><strong>Conteúdo gerado:</strong> Copies, prompts de imagem e segmentações de público criados pela IA ou manualmente.</li>
+      <li><strong>Logs de atividade:</strong> Histórico de ações realizadas pelo sistema (criação, pausa, otimização de campanhas).</li>
+    </ul>
+    <div class="highlight">
+      ⚠ <strong>Importante:</strong> Não coletamos dados pessoais dos usuários finais dos anúncios (como nome, e-mail ou CPF de consumidores). Os dados tratados são exclusivamente dados operacionais da conta Meta do anunciante.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Como usamos os dados</h2>
+    <p>Os dados coletados são utilizados exclusivamente para:</p>
+    <ul>
+      <li>Autenticar e realizar chamadas à Meta Marketing API em seu nome.</li>
+      <li>Criar, pausar, ativar e otimizar campanhas conforme suas instruções.</li>
+      <li>Gerar relatórios de performance das campanhas.</li>
+      <li>Melhorar os modelos de IA para geração de copy e segmentação ao longo do tempo (dados agregados e anonimizados).</li>
+      <li>Registrar histórico de ações para auditoria e rastreabilidade.</li>
+    </ul>
+    <p><strong>Não compartilhamos, vendemos ou cedemos seus dados a terceiros</strong>, exceto quando necessário para o funcionamento técnico dos serviços integrados (Meta API, Firebase Firestore, OpenAI).</p>
+  </div>
+
+  <div class="card">
+    <h2>4. Serviços terceiros integrados</h2>
+    <ul>
+      <li><strong>Meta for Developers (Meta Platforms, Inc.):</strong> As campanhas e dados de anúncios são gerenciados via Meta Marketing API. Consulte a <a href="https://www.facebook.com/policy.php" target="_blank">Política de Privacidade da Meta</a>.</li>
+      <li><strong>Firebase Firestore (Google LLC):</strong> Os dados operacionais são armazenados no Google Cloud Firestore. Consulte a <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidade do Google</a>.</li>
+      <li><strong>OpenAI:</strong> Os prompts de contexto do produto são enviados à API da OpenAI para geração de copy e imagens. Consulte a <a href="https://openai.com/privacy" target="_blank">Política de Privacidade da OpenAI</a>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>5. Armazenamento e segurança</h2>
+    <p>Todas as credenciais são armazenadas no Google Firebase Firestore com acesso restrito por autenticação de service account. Nenhum dado é armazenado em servidores locais sem controle de acesso.</p>
+    <p>O acesso à plataforma é protegido por chave de API (X-API-Key). Em produção, recomendamos o uso de Google Secret Manager para armazenamento de tokens sensíveis.</p>
+    <p>Os Access Tokens da Meta têm validade limitada e devem ser renovados pelo próprio usuário. Não armazenamos senhas de contas Meta.</p>
+  </div>
+
+  <div class="card">
+    <h2>6. Retenção de dados</h2>
+    <p>Os dados são mantidos enquanto a automação estiver ativa na plataforma. Logs de auditoria são mantidos em janela deslizante de até 100 entradas por conta. Históricos de analytics são mantidos por tempo indeterminado para fins de melhoria contínua.</p>
+    <p>Você pode solicitar a exclusão completa dos seus dados a qualquer momento através da nossa <a href="/exclusao-de-dados">página de exclusão de dados</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>7. Seus direitos</h2>
+    <p>Em conformidade com a <strong>LGPD (Lei Geral de Proteção de Dados — Lei nº 13.709/2018)</strong>, você tem direito a:</p>
+    <ul>
+      <li>Acessar os dados que temos sobre sua conta.</li>
+      <li>Corrigir dados incorretos ou desatualizados.</li>
+      <li>Solicitar a exclusão de todos os seus dados.</li>
+      <li>Revogar o consentimento para tratamento dos dados a qualquer momento.</li>
+    </ul>
+    <p>Para exercer qualquer um desses direitos, utilize a <a href="/exclusao-de-dados">página de exclusão de dados</a> ou entre em contato pelo e-mail abaixo.</p>
+  </div>
+
+  <div class="card">
+    <h2>8. Contato</h2>
+    <p>Para dúvidas, solicitações ou para exercer seus direitos relacionados à privacidade, entre em contato:</p>
+    <ul>
+      <li><strong>Plataforma:</strong> AutomacaoAds</li>
+      <li><strong>E-mail:</strong> <a href="mailto:contato@automacaoads.com.br">contato@automacaoads.com.br</a></li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>AutomacaoAds &copy; 2026 — <a href="/privacidade">Privacidade</a> · <a href="/termos">Termos</a> · <a href="/exclusao-de-dados">Exclusão de Dados</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
