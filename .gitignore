@@ -1,0 +1,46 @@
+# === Notas pessoais ===
+anotacoes.txt
+
+# === Credenciais e segredos ===
+.env
+*.json
+!requirements*.txt
+
+# Exceção: manter arquivos JSON que NÃO sejam credenciais
+# (se precisar versionar algum .json específico, use: git add -f arquivo.json)
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# === Ambientes virtuais ===
+venv/
+.venv/
+env/
+.env/
+
+# === IDEs ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Logs ===
+*.log
+logs/
+
+# === Docker ===
+.dockerignore
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini

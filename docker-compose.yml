@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  automacao-ads:
+    build: .
+    container_name: automacao_ads_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Monta o arquivo de credenciais Firebase no container
+      - ./automacoes-royal-x.json:/app/automacoes-royal-x.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,27 @@
+# === Framework Principal ===
+fastapi==0.110.1
+uvicorn[standard]==0.29.0
+
+# === Validação e Configuração ===
+pydantic==2.7.1
+pydantic-settings==2.2.1
+python-dotenv==1.0.1
+python-multipart==0.0.9
+
+# === Firebase / Firestore ===
+firebase-admin==6.5.0
+
+# === Meta Marketing API ===
+facebook-business==20.0.0
+
+# === Retry e Resiliência ===
+tenacity==8.3.0
+
+# === HTTP Client (utilitário) ===
+httpx==0.27.0
+
+# === Static Files (frontend) ===
+aiofiles==23.2.1
+
+# === IA — OpenAI (GPT-4o para copy/análise, DALL-E 3 para imagens) ===
+openai==1.30.5

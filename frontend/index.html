@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutomacaoAds — Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="6" fill="#1877F2"/>
+          <path d="M13 3v8h8l-9 10v-8H4l9-10z" fill="white"/>
+        </svg>
+        <span class="logo-text">AutomacaoAds</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Painel</span>
+      <a href="#" data-route="" class="nav-item">
+        <span class="nav-icon">⊞</span> Dashboard
+      </a>
+      <a href="#automacoes" data-route="automacoes" class="nav-item">
+        <span class="nav-icon">🔑</span> Automações
+      </a>
+      <a href="#campanhas" data-route="campanhas" class="nav-item">
+        <span class="nav-icon">📢</span> Campanhas
+      </a>
+
+      <span class="nav-section-label">IA &amp; Automação</span>
+      <a href="#ai-creator" data-route="ai-creator" class="nav-item">
+        <span class="nav-icon">🤖</span> Criar com IA
+      </a>
+      <a href="#ab-test" data-route="ab-test" class="nav-item">
+        <span class="nav-icon">⚗</span> Teste A/B
+      </a>
+      <a href="#optimizer" data-route="optimizer" class="nav-item">
+        <span class="nav-icon">⚡</span> Otimizador
+      </a>
+
+      <span class="nav-section-label">Criar Manual</span>
+      <a href="#nova-campanha" data-route="nova-campanha" class="nav-item">
+        <span class="nav-icon">＋</span> Nova Campanha
+      </a>
+      <a href="#novo-adset" data-route="novo-adset" class="nav-item">
+        <span class="nav-icon">＋</span> Novo Ad Set
+      </a>
+      <a href="#novo-ad" data-route="novo-ad" class="nav-item">
+        <span class="nav-icon">＋</span> Novo Anúncio
+      </a>
+
+      <span class="nav-section-label">Sistema</span>
+      <a href="#configuracoes" data-route="configuracoes" class="nav-item">
+        <span class="nav-icon">⚙</span> Configurações
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span id="api-status-dot" class="status-dot offline"></span>
+      <span id="api-status-text">Verificando...</span>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <div id="main-wrapper">
+    <header id="top-bar">
+      <button class="btn-icon" id="sidebar-toggle" title="Menu">
+        <span>☰</span>
+      </button>
+      <h1 id="page-title">Dashboard</h1>
+      <div class="top-bar-end">
+        <span class="api-env-badge" id="api-env-badge">DEV</span>
+      </div>
+    </header>
+
+    <main id="content">
+      <div class="page-loading">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div id="toast-container"></div>
+
+<!-- ===================== MODAL ===================== -->
+<div id="modal-backdrop" class="hidden">
+  <div id="modal-box" role="dialog">
+    <div id="modal-header">
+      <span id="modal-title"></span>
+      <button class="btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div id="modal-footer"></div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
